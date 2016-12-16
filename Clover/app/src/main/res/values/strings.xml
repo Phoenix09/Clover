@@ -469,6 +469,9 @@ Re-enable this permission in the app settings if you permanently disabled it."</
     <string name="setting_proxy_enabled">Enable proxy</string>
     <string name="setting_proxy_address">Proxy server address</string>
     <string name="setting_proxy_port">Proxy server port</string>
+    <string name="setting_proxy_auth_enabled">Enable proxy authentication</string>
+    <string name="setting_proxy_username">Proxy server username</string>
+    <string name="setting_proxy_password">Proxy server password</string>
 
     <string name="settings_screen_watch">Watcher settings</string>
     <string name="settings_group_watch">Watcher settings</string>

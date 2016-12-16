@@ -30,6 +30,7 @@ import org.floens.chan.ui.settings.SettingView;
 import org.floens.chan.ui.settings.SettingsController;
 import org.floens.chan.ui.settings.SettingsGroup;
 import org.floens.chan.ui.settings.StringSettingView;
+import org.floens.chan.ui.settings.PasswordSettingView;
 
 import de.greenrobot.event.EventBus;
 
@@ -111,6 +112,9 @@ public class AdvancedSettingsController extends SettingsController {
         proxy.add(new BooleanSettingView(this, ChanSettings.proxyEnabled, R.string.setting_proxy_enabled, 0));
         proxy.add(new StringSettingView(this, ChanSettings.proxyAddress, R.string.setting_proxy_address, R.string.setting_proxy_address));
         proxy.add(new IntegerSettingView(this, ChanSettings.proxyPort, R.string.setting_proxy_port, R.string.setting_proxy_port));
+        proxy.add(new BooleanSettingView(this, ChanSettings.proxyAuthEnabled, R.string.setting_proxy_auth_enabled, 0));
+        proxy.add(new StringSettingView(this, ChanSettings.proxyUsername, R.string.setting_proxy_username, R.string.setting_proxy_username));
+        proxy.add(new PasswordSettingView(this, ChanSettings.proxyPassword, R.string.setting_proxy_password, R.string.setting_proxy_password));
         groups.add(proxy);
     }
 }

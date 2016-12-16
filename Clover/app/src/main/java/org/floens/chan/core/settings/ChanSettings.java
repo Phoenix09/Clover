@@ -28,7 +28,9 @@ import org.floens.chan.ui.adapter.PostsFilter;
 import org.floens.chan.utils.AndroidUtils;
 
 import java.io.File;
+import java.net.Authenticator;
 import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 
 import de.greenrobot.event.EventBus;
@@ -153,6 +155,9 @@ public class ChanSettings {
     public static final BooleanSetting proxyEnabled;
     public static final StringSetting proxyAddress;
     public static final IntegerSetting proxyPort;
+    public static final BooleanSetting proxyAuthEnabled;
+    public static final StringSetting proxyUsername;
+    public static final StringSetting proxyPassword;
 
     public static final CounterSetting settingsOpenCounter;
     public static final CounterSetting historyOpenCounter;
@@ -281,6 +286,27 @@ public class ChanSettings {
                 loadProxy();
             }
         });
+        proxyAuthEnabled = new BooleanSetting(p, "preference_proxy_auth_enabled", false);
+        proxyAuthEnabled.addCallback(new Setting.SettingCallback<Boolean>() {
+            @Override
+            public void onValueChange(Setting setting, Boolean value) {
+                loadProxy();
+            }
+        });
+        proxyUsername = new StringSetting(p, "preference_proxy_username", "");
+        proxyUsername.addCallback(new Setting.SettingCallback<String>() {
+            @Override
+            public void onValueChange(Setting setting, String value) {
+                loadProxy();
+            }
+        });
+        proxyPassword = new StringSetting(p, "preference_proxy_password", "");
+        proxyPassword.addCallback(new Setting.SettingCallback<String>() {
+            @Override
+            public void onValueChange(Setting setting, String value) {
+                loadProxy();
+            }
+        });
         loadProxy();
 
         settingsOpenCounter = new CounterSetting(p, "counter_settings_open");
@@ -337,9 +363,21 @@ public class ChanSettings {
 
     private static void loadProxy() {
         if (proxyEnabled.get()) {
+            if (proxyAuthEnabled.get()) {
+                Authenticator.setDefault(
+                        new Authenticator() {
+                            @Override
+                            public PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication(
+                                        proxyUsername.get(), proxyPassword.get().toCharArray());
+                            }
+                        }
+                );
+            }
             proxy = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(proxyAddress.get(), proxyPort.get()));
         } else {
             proxy = null;
+            Authenticator.setDefault(null);
         }
     }
 

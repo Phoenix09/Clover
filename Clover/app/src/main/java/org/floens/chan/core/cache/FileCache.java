@@ -26,6 +26,7 @@ import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -37,12 +38,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import okhttp3.Authenticator;
 import okhttp3.Call;
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.Route;
 import okhttp3.internal.Util;
 import okio.BufferedSource;
 
@@ -429,6 +433,18 @@ public class FileCache {
 
             call = fileCache.httpClient.newBuilder()
                     .proxy(ChanSettings.getProxy())
+                    .proxyAuthenticator(new Authenticator() {
+                        @Override
+                        public Request authenticate(Route route, Response response) throws IOException {
+                            if (!ChanSettings.proxyAuthEnabled.get() || !ChanSettings.proxyEnabled.get()) {
+                                return null;
+                            }
+                            String credentials = Credentials.basic(ChanSettings.proxyUsername.get(), ChanSettings.proxyPassword.get());
+                            return response.request().newBuilder()
+                                    .addHeader("Proxy-Authorization", credentials)
+                                    .build();
+                        }
+                    })
                     .build()
                     .newCall(request);
 
